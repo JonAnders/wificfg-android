@@ -93,10 +93,7 @@ public class DeviceListActivity extends AppCompatActivity {
                                            String permissions[], int[] grantResults) {
         if (requestCode == REQUEST_COARSE_LOCATION) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                btAdapter.startDiscovery();
-            }
-            else {
-                scanButton.setVisibility(View.VISIBLE);
+                scan();
             }
         }
     }
@@ -111,7 +108,10 @@ public class DeviceListActivity extends AppCompatActivity {
 
                 // Don't list paired devices again
                 if (device.getBondState() != BluetoothDevice.BOND_BONDED) {
-                    otherDeviceArrayAdapter.add(device.getName());
+                    String name = device.getName();
+                    if (name == null)
+                        name = "<no name>";
+                    otherDeviceArrayAdapter.add(name);
                 }
             }
             else if (action.equals(BluetoothAdapter.ACTION_DISCOVERY_FINISHED)) {
@@ -123,13 +123,6 @@ public class DeviceListActivity extends AppCompatActivity {
     };
 
     private void scan() {
-        scanButton.setVisibility(View.GONE);
-
-        otherDeviceArrayAdapter.clear();
-
-        if (btAdapter.isDiscovering())
-            btAdapter.cancelDiscovery();
-
         // https://stackoverflow.com/questions/32656510/register-broadcast-receiver-dynamically-does-not-work-bluetoothdevice-action-f/37482277#37482277
         // https://developer.android.com/training/permissions/requesting.html
         // https://developer.android.com/guide/topics/security/permissions.html
@@ -140,7 +133,15 @@ public class DeviceListActivity extends AppCompatActivity {
                     REQUEST_COARSE_LOCATION);
         }
         else {
+            otherDeviceArrayAdapter.clear();
+
+            if (btAdapter.isDiscovering())
+                btAdapter.cancelDiscovery();
+
             btAdapter.startDiscovery();
+
+            scanButton.setVisibility(View.GONE);
         }
+
     }
 }
