@@ -130,6 +130,9 @@ public class DeviceListActivity extends AppCompatActivity {
         if (btAdapter.isDiscovering())
             btAdapter.cancelDiscovery();
 
+        // https://stackoverflow.com/questions/32656510/register-broadcast-receiver-dynamically-does-not-work-bluetoothdevice-action-f/37482277#37482277
+        // https://developer.android.com/training/permissions/requesting.html
+        // https://developer.android.com/guide/topics/security/permissions.html
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this,
